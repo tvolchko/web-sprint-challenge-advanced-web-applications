@@ -1,12 +1,69 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import styled from 'styled-components';
+import axios from 'axios';
+
+const initialState = {
+    username: 'Lambda',
+    password: 'School',
+}
 
 const Login = () => {
+    const [ form, setForm ]  = useState(initialState)
+    const [ error, setError ] = useState('')
+    const { push } = useHistory()
+
+
+    const handleChange = e => {
+        setForm({
+            ...form,
+            [e.target.name]: e.target.value
+        })
+    }
     
+    const handleSubmit = e => {
+        e.preventDefault()
+        axios.post('http://localhost:5000/api/login', form)
+            .then(resp => {
+                localStorage.setItem('token', resp.data.token)
+                push('/view')
+            })
+            .catch(err => {
+                console.log(err)
+                setError(err.response.data.error)
+            })
+        
+    }
     return(<ComponentContainer>
         <ModalContainer>
             <h1>Welcome to Blogger Pro</h1>
             <h2>Please enter your account information.</h2>
+            <FormGroup>
+                <Label>Login</Label>
+                <Input
+                    type={'text'}
+                    value={form.username}
+                    placeholder='User Name'
+                    id='username'
+                    name='username'
+                    onChange={handleChange}
+                />
+
+                <Input
+                    type={'password'}
+                    value={form.password}
+                    placeholder='Password'
+                    id='password'
+                    name='password'
+                    onChange={handleChange}
+                />
+
+                <Button id='submit' onClick={handleSubmit}>
+                    Submit
+                </Button>
+                
+            </FormGroup>
+            <p id='error'>{error}</p>
         </ModalContainer>
     </ComponentContainer>);
 }

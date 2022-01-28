@@ -1,6 +1,9 @@
 import React from 'react';
-import { Route } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import styled from 'styled-components';
+import View from './View';
+import Logout from './Logout';
+import PrivateRoute from './PrivateRoute';
 
 import Header from './Header';
 import BloomHeader from './BloomHeader';
@@ -12,9 +15,17 @@ const App = () => {
       <BloomHeader/>
       <Header/>
       <RouteContainer>
-        <Route exact path="/">
-          <Login/>
-        </Route>          
+        <Switch>     
+
+          <PrivateRoute exact path='/view' component={View}/>
+
+          <PrivateRoute exact path='/logout' component={Logout}/>
+
+          <Route path='/login' component={Login}/>
+
+          <Route path="/" component={Login}/>  
+
+        </Switch>   
       </RouteContainer>
     </AppContainer>
   )
